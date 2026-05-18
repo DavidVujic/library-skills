@@ -2,6 +2,10 @@
 
 ## Latest Changes
 
+### Internal
+
+* ⬆️ Upgrade Zensical. PR [#76](https://github.com/tiangolo/library-skills/pull/76) by [@tiangolo](https://github.com/tiangolo).
+
 ## 0.0.5 (2026-05-01)
 
 ### Features
