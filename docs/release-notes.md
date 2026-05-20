@@ -2,6 +2,10 @@
 
 ## Latest Changes
 
+### Docs
+
+* 📝 Update security policy. PR [#92](https://github.com/tiangolo/library-skills/pull/92) by [@tiangolo](https://github.com/tiangolo).
+
 ### Internal
 
 * 🛠️ Update MkDocs socials. PR [#89](https://github.com/tiangolo/library-skills/pull/89) by [@tiangolo](https://github.com/tiangolo).
