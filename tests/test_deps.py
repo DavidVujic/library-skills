@@ -1,8 +1,48 @@
+import pytest
+
 from library_skills.deps import (
     get_node_top_level_deps,
     get_python_top_level_deps,
     get_top_level_deps,
 )
+
+# Test data for parameterized test
+TEST_CASES = [
+    {
+        "test_data": """
+[project]
+dependencies = ["Rich-Toolkit~=0.19"]
+""",
+        "expected_output": {"rich-toolkit"},
+        "description": "normalizes compatible dependencies (~=)",
+    },
+    {
+        "test_data": """
+[project]
+dependencies = [
+    "rich>=13",
+    1,
+]
+""",
+        "expected_output": {"rich"},
+        "description": "ignores non-string dependencies",
+    },
+]
+
+
+@pytest.mark.parametrize(
+    "case",
+    TEST_CASES,
+    ids=lambda case: case["description"],  # Dynamic test name
+)
+def test_get_python_top_level_deps_normalization_and_filtering(
+    tmp_path, case
+):
+    """Test that `get_python_top_level_deps` correctly normalizes and filters dependencies."""
+    pyproject = tmp_path / "pyproject.toml"
+    pyproject.write_text(case["test_data"], encoding="utf-8")
+
+    assert get_python_top_level_deps(tmp_path) == case["expected_output"]
 
 
 def test_get_python_top_level_deps_normalizes_required_and_optional_deps(tmp_path):
@@ -69,19 +109,6 @@ lint = [
     }
 
 
-def test_get_python_top_level_deps_normalizes_compatible_deps(tmp_path):
-    pyproject = tmp_path / "pyproject.toml"
-    pyproject.write_text(
-        """
-[project]
-dependencies = ["Rich-Toolkit~=0.19"]
-""",
-        encoding="utf-8",
-    )
-
-    assert get_python_top_level_deps(tmp_path) == {"rich-toolkit"}
-
-
 def test_get_python_top_level_deps_returns_none_without_pyproject(tmp_path):
     assert get_python_top_level_deps(tmp_path) is None
 
@@ -98,21 +125,6 @@ def test_get_python_top_level_deps_returns_empty_set_for_invalid_project_table(
     (tmp_path / "pyproject.toml").write_text('project = "demo"\n', encoding="utf-8")
 
     assert get_python_top_level_deps(tmp_path) == set()
-
-
-def test_get_python_top_level_deps_ignores_non_string_dependencies(tmp_path):
-    (tmp_path / "pyproject.toml").write_text(
-        """
-[project]
-dependencies = [
-    "rich>=13",
-    1,
-]
-""",
-        encoding="utf-8",
-    )
-
-    assert get_python_top_level_deps(tmp_path) == {"rich"}
 
 
 def test_get_node_top_level_deps_normalizes_dependency_fields(tmp_path):
